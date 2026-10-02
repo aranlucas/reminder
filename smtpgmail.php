@@ -1,64 +1,60 @@
 <?php
-include "smtpmail/classes/class.phpmailer.php"; // include the class name
-$mail = new PHPMailer(); // create a new object
-$mail->IsSMTP(); // enable SMTP
-$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-$mail->SMTPAuth = true; // authentication enabled
-$mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for GMail
-$mail->Host = "smtp.gmail.com";
-$mail->Port = 465; // or 587
-$mail->IsHTML(true);
-$mail->Username = "aranlucasspam@gmail.com";
-$mail->Password = "sacul123";
-//$mail->SetFrom("Reminder");
-//$mail->Subject = "Your Gmail SMTP Mail";
-//$mail->Body = $_POST['message'];
-//$mail->AddAddress($_POST['email']);
-$carrier= array(
-		'@messaging.sprintpcs.com',
-		'@vtext.com',
-		'@tmomail.net',
-		'@txt.att.net',
-		'@mymetropcs.com'
-);
 
-$recipients = array();
-$number=$_POST['email'];
-foreach($carrier as $addr){
-	$string= $number.$addr;
-	$recipients[]=$string;
+declare(strict_types=1);
+
+use PHPMailer\PHPMailer\PHPMailer;
+
+require_once __DIR__ . '/src/ReminderDelivery.php';
+
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    header('Allow: POST');
+    $report = ['http_status' => 405, 'message' => 'Submit the message form to send a reminder.'];
+} else {
+    $report = ReminderDelivery::send($_POST['email'] ?? null, $_POST['message'] ?? null, function (): ReminderTransport {
+        $username = getenv('REMINDER_SMTP_USERNAME');
+        $password = getenv('REMINDER_SMTP_PASSWORD');
+        $from = getenv('REMINDER_FROM_ADDRESS');
+        if ($username === false || $username === '' || $password === false || $password === ''
+            || $from === false || !filter_var($from, FILTER_VALIDATE_EMAIL)
+            || !is_file(__DIR__ . '/vendor/autoload.php')) {
+            throw new RuntimeException('SMTP configuration or dependencies are unavailable.');
+        }
+
+        require_once __DIR__ . '/vendor/autoload.php';
+        require_once __DIR__ . '/src/PhpMailerTransport.php';
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->SMTPDebug = 0;
+        $mail->SMTPAuth = true;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 465;
+        $mail->Timeout = 10;
+        $mail->Username = $username;
+        $mail->Password = $password;
+        $mail->setFrom($from, 'Reminder');
+        return new PhpMailerTransport($mail);
+    });
 }
+
+http_response_code($report['http_status']);
+header('Content-Type: text/html; charset=UTF-8');
+header('Cache-Control: no-store');
 ?>
-<pre>
-    <?php
-    print_r($recipients);
-    ?>
-    </pre>
-<?php
-
-foreach($recipients as $email){
-	// it will display the emails of all users in their Mailbox 'To' area. Simple multiple mail.
-	$mail->AddAddress($email); //To address who will receive this email
-	$mail->MsgHTML($_POST['message']); //Put your body of the message you can place html code here
-	$send = $mail->Send(); //Send the mails
-	// if you want to does not show other users email addresses like newsletter, daily, weekly, subscription emails means use the below line to clear previous email address
-	$mail->ClearAddresses();
-}
-
-if($send){
-	echo '<center><h3 style="color:#009933;">Mail sent successfully</h3></center>';
-}
-else{
-	echo '<center><h3 style="color:#FF3300;">Mail error: </h3></center>'.$mail->ErrorInfo;
-}
-
-//mail("tt.net", "", "Your packaged has arrived!", "From: David Walsh <david@davidwalsh.name>\r\n");
-
-?>
-<!-- if(!$mail->Send()){ -->
-<!-- 	echo "Mailer Error: " . $mail->ErrorInfo; -->
-<!-- } -->
-<!-- else{ -->
-<!-- 	echo "Message has been sent"; -->
-<!-- } -->
-<!-- ?> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Message result · Reminder</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/reminder.css" rel="stylesheet">
+</head>
+<body>
+  <main class="page-width">
+    <h1>Message result</h1>
+    <p><?= htmlspecialchars($report['message'], ENT_QUOTES, 'UTF-8') ?></p>
+    <p><a href="index.html">Back to the message form</a></p>
+  </main>
+</body>
+</html>
