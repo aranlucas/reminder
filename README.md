@@ -18,7 +18,7 @@ Before sending, configure these environment variables in the PHP server's enviro
 
 Do not put credentials in source control or a publicly served file. The application does not read `.env` files. The existing Gmail SMTPS connection (`smtp.gmail.com:465`) is retained. Previous inline settings in `smtpgmail.php` must be moved into the server environment; missing configuration returns a safe unavailable response without sending anything.
 
-Open `index.html` through a PHP-capable local server. The application entrypoint uses Composer's PHPMailer, not the old bundled classes. The historical `smtpmail/` examples remain untouched and are not supported entrypoints; do not expose or run them as part of a deployment.
+`composer dev` serves the app at `https://reminder.localhost/index.html` through [Portless](https://github.com/vercel-labs/portless) (`npm install -g portless`); its first run may ask for `sudo` to bind port 443 and trust a local certificate. The application entrypoint uses Composer's PHPMailer, not the old bundled classes. The historical `smtpmail/` examples remain untouched and are not supported entrypoints; do not expose or run them as part of a deployment.
 
 ## Delivery contract
 
