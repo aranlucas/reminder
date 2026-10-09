@@ -18,34 +18,7 @@ Before sending, configure these environment variables in the PHP server's enviro
 
 Do not put credentials in source control or a publicly served file. The application does not read `.env` files. The existing Gmail SMTPS connection (`smtp.gmail.com:465`) is retained. Previous inline settings in `smtpgmail.php` must be moved into the server environment; missing configuration returns a safe unavailable response without sending anything.
 
-Open `index.html` through a PHP-capable local server. The application entrypoint uses Composer's PHPMailer, not the old bundled classes. The historical `smtpmail/` examples remain untouched and are not supported entrypoints; do not expose or run them as part of a deployment.
-
-
-## Local URLs with Portless
-
-Install the existing Composer dependencies first. This launches PHP's local
-development server bound to loopback on the port assigned by Portless.
-
-The standard development command uses [Portless](https://github.com/vercel-labs/portless).
-Install its pinned CLI once with Node.js 24 or newer, then run this repository's command after the
-normal dependency and environment setup:
-
-```sh
-npm install -g portless@0.15.7
-composer dev
-```
-
-The main checkout uses `https://reminder.localhost` with the default proxy settings.
-Use the URL printed by Portless if you have changed its proxy port, TLS, or TLD.
-Linked Git worktrees get a branch prefix, so each checkout has its own origin.
-The first HTTPS run can request local administrator permission to bind port 443,
-trust its development certificate, and synchronize local hostnames. Ctrl+C stops
-the child server and removes its route.
-
-Open `/index.html` at the printed URL. Leave SMTP configuration unset for a
-preview that cannot send messages; the app keeps its existing safe unavailable
-response. The historical `smtpmail/` examples are unsupported and should not be
-used.
+`composer dev` serves the app at `https://reminder.localhost/index.html` through [Portless](https://github.com/vercel-labs/portless) (`npm install -g portless`); its first run may ask for `sudo` to bind port 443 and trust a local certificate. The application entrypoint uses Composer's PHPMailer, not the old bundled classes. The historical `smtpmail/` examples remain untouched and are not supported entrypoints; do not expose or run them as part of a deployment.
 
 ## Delivery contract
 
