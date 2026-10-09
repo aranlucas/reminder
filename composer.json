@@ -23,6 +23,8 @@
         "check": [
             "@lint",
             "@test"
-        ]
+        ],
+        "dev": "portless run --name reminder sh -c 'exec php -S 127.0.0.1:\"$PORT\"'",
+        "dev:direct": "php -S 127.0.0.1:8080"
     }
 }
