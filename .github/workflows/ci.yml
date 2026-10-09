@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  ci:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Check runtime
+        run: |
+          php -r 'exit(PHP_VERSION_ID >= 80200 ? 0 : 1);'
+
+      - name: Install locked dependencies without scripts or plugins
+        run: composer install --no-interaction --prefer-dist --no-progress --no-scripts --no-plugins
+
+      - parallel:
+          - name: Validate dependency manifest
+            run: composer validate --strict
+
+          - name: Lint and exercise offline contracts
+            run: composer check
