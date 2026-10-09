@@ -40,13 +40,12 @@ Use the URL printed by Portless if you have changed its proxy port, TLS, or TLD.
 Linked Git worktrees get a branch prefix, so each checkout has its own origin.
 The first HTTPS run can request local administrator permission to bind port 443,
 trust its development certificate, and synchronize local hostnames. Ctrl+C stops
-the child server and removes its route. The direct fallback below starts the
-server without the proxy.
+the child server and removes its route.
 
 Open `/index.html` at the printed URL. Leave SMTP configuration unset for a
 preview that cannot send messages; the app keeps its existing safe unavailable
 response. The historical `smtpmail/` examples are unsupported and should not be
-used. For direct local access at port 8080, use `composer dev:direct`.
+used.
 
 ## Delivery contract
 

@@ -1,30 +1,29 @@
 {
-    "name": "aranlucas/reminder",
-    "description": "A small PHP reminder form using SMTP messaging gateways",
-    "type": "project",
-    "license": "proprietary",
-    "require": {
-        "php": ">=8.2",
-        "ext-filter": "*",
-        "ext-openssl": "*",
-        "phpmailer/phpmailer": "^7.0"
-    },
-    "config": {
-        "allow-plugins": false,
-        "sort-packages": true
-    },
-    "scripts": {
-        "lint": "@php tests/lint.php",
-        "test": [
-            "@php tests/delivery.php",
-            "@php tests/transport.php",
-            "@php tests/http.php"
-        ],
-        "check": [
-            "@lint",
-            "@test"
-        ],
-        "dev": "portless run --name reminder sh -c 'exec php -S 127.0.0.1:\"$PORT\"'",
-        "dev:direct": "php -S 127.0.0.1:8080"
-    }
+  "name": "aranlucas/reminder",
+  "description": "A small PHP reminder form using SMTP messaging gateways",
+  "type": "project",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.2",
+    "ext-filter": "*",
+    "ext-openssl": "*",
+    "phpmailer/phpmailer": "^7.0"
+  },
+  "config": {
+    "allow-plugins": false,
+    "sort-packages": true
+  },
+  "scripts": {
+    "lint": "@php tests/lint.php",
+    "test": [
+      "@php tests/delivery.php",
+      "@php tests/transport.php",
+      "@php tests/http.php"
+    ],
+    "check": [
+      "@lint",
+      "@test"
+    ],
+    "dev": "portless run --name reminder sh -c 'exec php -S 127.0.0.1:\"$PORT\"'"
+  }
 }
