@@ -18,7 +18,7 @@ Before sending, configure these environment variables in the PHP server's enviro
 
 Do not put credentials in source control or a publicly served file. The application does not read `.env` files. The existing Gmail SMTPS connection (`smtp.gmail.com:465`) is retained. Previous inline settings in `smtpgmail.php` must be moved into the server environment; missing configuration returns a safe unavailable response without sending anything.
 
-`composer dev` serves the app at `https://reminder.localhost/index.html` through [Portless](https://github.com/vercel-labs/portless) (`npm install -g portless`); its first run may ask for `sudo` to bind port 443 and trust a local certificate. The application entrypoint uses Composer's PHPMailer, not the old bundled classes. The historical `smtpmail/` examples remain untouched and are not supported entrypoints; do not expose or run them as part of a deployment.
+`composer dev` serves the app at `https://reminder.localhost/index.html` through [Portless](https://github.com/vercel-labs/portless) (`npm install -g portless`); its first run may ask for `sudo` to bind port 443 and trust a local certificate. The application entrypoint uses Composer's maintained PHPMailer dependency.
 
 ## Delivery contract
 
@@ -38,4 +38,4 @@ composer audit --locked
 
 The contract tests use fake delivery outcomes and an in-memory SMTP adapter for the real PHPMailer. Entrypoint tests deliberately unset SMTP configuration. No tests contact SMTP servers, send notifications, use real reminders, or require credentials. They cover aggregate outcomes, malformed requests, literal text, per-send recipient isolation and safe error responses.
 
-Before any public deployment, review access control/rate limiting and the obsolete bundled examples as well as carrier availability. This change does not add authentication, schedule reminders, rotate any historical credentials, or deploy the application.
+Before any public deployment, review access control/rate limiting and carrier availability. This change does not add authentication, schedule reminders, rotate any historical credentials, or deploy the application.
