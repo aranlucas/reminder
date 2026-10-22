@@ -14,18 +14,30 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  ci:
+  php:
+    name: PHP ${{ matrix.php }}
     runs-on: ubuntu-24.04
     timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.2.35", "8.3.36", "8.4.27", "8.5.12"]
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Check runtime
+      - name: Set up patched PHP and Composer
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # 2.40.0
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2.10.3
+          coverage: none
+
+      - name: Verify patched runtime
         run: |
-          php -r 'exit(PHP_VERSION_ID >= 80200 ? 0 : 1);'
+          composer check-platform-reqs --lock
 
       - name: Install locked dependencies without scripts or plugins
         run: composer install --no-interaction --prefer-dist --no-progress --no-scripts --no-plugins
@@ -36,3 +48,14 @@ jobs:
 
           - name: Lint and exercise offline contracts
             run: composer check
+
+  ci:
+    if: always()
+    needs: php
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - name: Require every supported PHP runtime to pass
+        env:
+          PHP_RESULT: ${{ needs.php.result }}
+        run: test "$PHP_RESULT" = success
