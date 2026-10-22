@@ -14,7 +14,7 @@
         "sort-packages": true
     },
     "scripts": {
-        "lint": "@php tests/lint.php",
+        "lint": "printf '%s\\0' smtpgmail.php src/*.php tests/*.php | xargs -0 -n 1 \"$PHP_BINARY\" -l",
         "test": [
             "@php tests/delivery.php",
             "@php tests/transport.php",
