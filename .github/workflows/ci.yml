@@ -5,6 +5,7 @@ on:
   push:
     branches: [master]
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
 
 permissions:
   contents: read
@@ -15,6 +16,7 @@ concurrency:
 
 jobs:
   php:
+    if: ${{ github.event.pull_request.draft != true }}
     name: PHP ${{ matrix.php }}
     runs-on: ubuntu-24.04
     timeout-minutes: 5
@@ -50,7 +52,7 @@ jobs:
             run: composer check
 
   ci:
-    if: always()
+    if: ${{ (always()) && github.event.pull_request.draft != true }}
     needs: php
     runs-on: ubuntu-24.04
     timeout-minutes: 1
