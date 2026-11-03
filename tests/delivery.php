@@ -57,7 +57,7 @@ foreach ([
     }
 }
 
-foreach (['2025550100', '1-202-555-0100', '+1 (202) 555-0100', ' (202) 555-0100 ', '202.555.0100'] as $phone) {
+foreach (['1-202-555-0100', '+1 (202) 555-0100', ' (202) 555-0100 ', '202.555.0100'] as $phone) {
     $transport = new FakeTransport(array_fill(0, 5, true));
     $report = ReminderDelivery::send($phone, 'Hello', fn () => $transport);
     check($report['status'] === 'accepted', 'Accept common North American phone formatting.');

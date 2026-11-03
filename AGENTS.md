@@ -15,3 +15,12 @@ Before hand-writing general-purpose code, use a well-maintained library: activel
 
 - SMTP connections and message construction → `phpmailer/phpmailer` (`PHPMailer`).
 - Sender email validation → PHP standard-library `filter_var` with `FILTER_VALIDATE_EMAIL`.
+
+## Tests: behavior and regression value
+
+- Before adding a test, identify the specific behavior, a credible mistake it should catch, and an independently justified expected result.
+- Prefer small, fast, reliable tests whose failures identify the broken behavior. Use integration/E2E tests for interactions isolated tests cannot establish.
+- Do not reproduce implementation logic in assertions or mocks.
+- Protect contracts, not incidental internal structure.
+- Distinguish temporary development scaffolding from checks worth maintaining.
+- Never delete or weaken a failing test just to make the suite pass.
