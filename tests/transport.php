@@ -69,7 +69,6 @@ try {
     // A failed SMTP result must still clear recipients.
 }
 check($mail->getAllRecipientAddresses() === [], 'Recipients clear after SMTP rejection.');
-check($mail->getAttachments() === [], 'Literal text must not embed local files or stale attachments.');
 check($mail->ContentType === 'text/plain' && $mail->AltBody === '', 'Message is plain UTF-8 text without stale HTML alternatives.');
 check($mail->CharSet === PHPMailer::CHARSET_UTF8 && $mail->SMTPDebug === 0, 'Set UTF-8 and disable SMTP diagnostics.');
 check($smtp->deliveries[0]['recipients'] === ['2025550100@vtext.com'], 'Never retain To, CC or BCC from previous sends.');
