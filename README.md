@@ -24,7 +24,7 @@ Keep credentials out of source control and publicly served files; rotate any pre
 
 Messages are sent as literal UTF-8 text, not interpreted as HTML or local attachment paths.
 
-The app attempts every configured carrier gateway without discovering the recipient's carrier. Providers may no longer offer email-to-SMS delivery. SMTP acceptance does not confirm arrival on a phone, and retrying after partial acceptance can duplicate messages.
+The app attempts every configured carrier gateway without discovering the recipient's carrier. Providers may no longer offer email-to-SMS delivery. SMTP acceptance does not confirm arrival on a phone, and retrying after partial or unconfirmed acceptance can duplicate messages.
 
 HTTP results omit recipient lists, message contents and SMTP diagnostics.
 

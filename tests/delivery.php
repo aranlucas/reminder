@@ -76,6 +76,12 @@ foreach ([null, [], 123, '', " \t\r\n"] as $message) {
     check($report['status'] === 'invalid', 'Reject missing, malformed or blank messages.');
     check($factoryCalls === 0 && $report['outcomes'] === [], 'Invalid message must not initialize transport.');
 }
+// A lost DATA acknowledgement can throw after the gateway has accepted mail.
+$transport = new FakeTransport([new RuntimeException('lost acknowledgement'), false, false, false, false]);
+$report = ReminderDelivery::send('2025550100', 'Hello', fn () => $transport);
+check($report['status'] === 'failed' && $report['http_status'] === 502 && count($transport->calls) === 5, 'Unconfirmed acceptance remains a failed request and attempts later gateways.');
+check(str_contains($report['message'], 'confirmed acceptance') && str_contains($report['message'], 'duplicate'), 'Unconfirmed SMTP failure must describe uncertainty and duplicate retry risk.');
+
 $report = ReminderDelivery::send('2025550100', 'Hello', function () { throw new RuntimeException('private configuration error'); });
 check($report['status'] === 'unavailable' && $report['http_status'] === 503 && $report['outcomes'] === [], 'Configuration failure must not claim delivery attempts.');
 check(!str_contains($report['message'], 'private configuration error'), 'Configuration diagnostics must remain private.');

@@ -68,7 +68,7 @@ final class ReminderDelivery
         if ($accepted > 0) {
             return self::report('partial', 502, 'Some gateways accepted the message, but others failed. Phone delivery is not confirmed. Retrying may send duplicate messages.', $outcomes);
         }
-        return self::report('failed', 502, 'No gateway accepted the message. Please try again later.', $outcomes);
+        return self::report('failed', 502, 'No gateway confirmed acceptance of the message. Phone delivery is not confirmed. Retrying may send duplicate messages.', $outcomes);
     }
 
     private static function report(string $status, int $httpStatus, string $message, array $outcomes = []): array
