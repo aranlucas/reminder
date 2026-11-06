@@ -67,4 +67,12 @@ acceptance contracts remain unchanged.
 
 Baseline CI: https://github.com/aranlucas/reminder/actions/runs/42276461553 passed
 all four PHP versions (8.2.35, 8.3.36, 8.4.27, 8.5.12) and aggregate `ci`.
-Job steps/logs were inspected. New regression CI and independent review pending.
+Job steps/logs were inspected. Regression-only commit `b6583df` failed on all
+four PHP runtimes at the intended uncertainty/duplicate-risk assertion:
+https://github.com/aranlucas/reminder/actions/runs/42304542398 . Manifest validation
+and PHP lint passed there; failure logs were inspected. Fixed-version CI pending.
+
+Independent review challenged the whole repository, finding and implementation;
+no blocking objections or additional worthwhile defects. Its README consistency
+suggestion was applied: retry risk also covers unconfirmed acceptance. No local
+tests or builds ran. No structural cleanup, dependencies or public APIs changed.
