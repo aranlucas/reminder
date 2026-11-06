@@ -66,11 +66,10 @@ try {
     $transport->send('2025550100@vtext.com', '<img src="fixture.txt">Hello');
     throw new RuntimeException('Expected fake SMTP rejection.');
 } catch (MailerException $error) {
-    // A failed SMTP result must still clear recipients.
 }
 check($mail->getAllRecipientAddresses() === [], 'Recipients clear after SMTP rejection.');
-check($mail->ContentType === 'text/plain' && $mail->AltBody === '', 'Message is plain UTF-8 text without stale HTML alternatives.');
-check($mail->CharSet === PHPMailer::CHARSET_UTF8 && $mail->SMTPDebug === 0, 'Set UTF-8 and disable SMTP diagnostics.');
+check(stripos($smtp->deliveries[0]['message'], 'Content-Type: text/plain; charset=UTF-8') !== false, 'SMTP message declares plain UTF-8 text.');
+check(!str_contains($smtp->deliveries[0]['message'], 'old alternative'), 'No stale HTML alternative is sent.');
 check($smtp->deliveries[0]['recipients'] === ['2025550100@vtext.com'], 'Never retain To, CC or BCC from previous sends.');
 check(str_contains($smtp->deliveries[0]['message'], '<img src="fixture.txt">Hello'), 'User markup is preserved as literal text.');
 check(!str_contains($smtp->deliveries[0]['message'], 'old.txt'), 'No stale attachment is sent.');

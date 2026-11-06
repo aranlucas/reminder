@@ -20,7 +20,6 @@ final class ReminderDelivery
     ];
 
     /**
-     * The transport is created only after validation. Each gateway is attempted once.
      * Outcomes are for internal use; only the constant public message belongs in HTML.
      *
      * @param callable(): ReminderTransport $makeTransport
